@@ -8,7 +8,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 
-
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 #--- hyperparameters ---
 N_EPOCHS = 5
@@ -106,6 +106,7 @@ for epoch in range(N_EPOCHS):
    
    
   for batch_num, (data, target) in enumerate(train_loader):
+    data, target = data.to(device), target.to(device)  
     optimizer.zero_grad()
     output = model(data)
     loss = loss_function(output, target)
@@ -148,7 +149,8 @@ model.eval()
 
 with torch.no_grad():
     for data, target in test_loader:
-      
+        
+      data, target = data.to(device), target.to(device)  
       output = model(data)
       test_loss += loss_function(output, target).item()
       pred = output.data.max(1, keepdim=True)[1]
