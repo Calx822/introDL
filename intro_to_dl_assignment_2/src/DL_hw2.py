@@ -85,7 +85,9 @@ class CNN(nn.Module):
 
 #--- set up ---
 # if torch.cuda.is_available():
-device = torch.device('cuda')
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
+
 # else:
 #     device = torch.device('cpu')
 
@@ -102,7 +104,8 @@ train_counter = []
 test_losses = []
 test_counter = [i*len(train_loader.dataset) for i in range(N_EPOCHS + 1)]
 
-#--- training ---
+def train():
+    
 for epoch in range(N_EPOCHS):
    
    
