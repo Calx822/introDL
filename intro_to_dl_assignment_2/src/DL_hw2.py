@@ -11,7 +11,7 @@ import numpy as np
 
 
 #--- hyperparameters ---
-N_EPOCHS = 5
+N_EPOCHS = 20
 BATCH_SIZE_TRAIN = 100
 BATCH_SIZE_TEST = 100
 BATCH_SIZE_DEV = 100
