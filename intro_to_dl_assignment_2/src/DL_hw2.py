@@ -11,7 +11,7 @@ import numpy as np
 
 
 #--- hyperparameters ---
-N_EPOCHS = 20
+N_EPOCHS = 5
 BATCH_SIZE_TRAIN = 100
 BATCH_SIZE_TEST = 100
 BATCH_SIZE_DEV = 100
@@ -84,12 +84,9 @@ class CNN(nn.Module):
 
 
 #--- set up ---
-# if torch.cuda.is_available():
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
-# else:
-#     device = torch.device('cpu')
 
 model = CNN().to(device)
 
@@ -104,8 +101,7 @@ train_counter = []
 test_losses = []
 test_counter = [i*len(train_loader.dataset) for i in range(N_EPOCHS + 1)]
 
-def train():
-    
+#--- training ---
 for epoch in range(N_EPOCHS):
    
    
