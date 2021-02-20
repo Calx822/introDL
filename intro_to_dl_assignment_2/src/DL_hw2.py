@@ -84,10 +84,10 @@ class CNN(nn.Module):
 
 
 #--- set up ---
-if torch.cuda.is_available():
-    device = torch.device('cuda')
-else:
-    device = torch.device('cpu')
+# if torch.cuda.is_available():
+device = torch.device('cuda')
+# else:
+#     device = torch.device('cpu')
 
 model = CNN().to(device)
 
