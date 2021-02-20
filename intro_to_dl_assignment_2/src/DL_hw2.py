@@ -15,7 +15,7 @@ N_EPOCHS = 5
 BATCH_SIZE_TRAIN = 100
 BATCH_SIZE_TEST = 100
 BATCH_SIZE_DEV = 100
-LR = 0.5
+
 
 
 
@@ -92,7 +92,7 @@ else:
 model = CNN().to(device)
 
 # WRITE CODE HERE
-optimizer = optim.Adam(params = model.parameters(), lr = LR)
+optimizer = optim.Adam(params = model.parameters())
 loss_function = nn.CrossEntropyLoss()
 
 g = True
@@ -110,6 +110,11 @@ for epoch in range(N_EPOCHS):
     optimizer.zero_grad()
     output = model(data)
     loss = loss_function(output, target)
+    l1_reg = 0.0
+    alpha = 1e-3
+    for param in model.parameters():
+        l1_reg += alpha*torch.norm(param,1)
+        loss = loss + l1_reg
     loss.backward()
     optimizer.step()
     if g == True:
