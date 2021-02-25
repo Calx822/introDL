@@ -53,10 +53,12 @@ def train(args,model, device, train_loader, optimizer, epoch):
         optimizer.zero_grad()
         output = model(data)
         loss = F.nll_loss(output, target)
-        if args.rtype == 1:
-            l1_reg = 0.0
-            for param in model.parameters():
-                l1_reg += args.alpha*torch.norm(param,1)
+        l1_reg = 0.0
+        l2_reg = 0.0
+        for param in model.parameters():
+            l1_reg += args.alpha*torch.norm(param,1)
+            l2_reg += args.alpha*torch.norm(param,2)**2
+        
         loss = loss         
         loss.backward()
         optimizer.step()
@@ -145,7 +147,7 @@ def main():
     
    
     model = CNN().to(device)
-    optimizer = optim.Adam(model.parameters(), lr = args.lr)
+    optimizer = optim.Adam(model.parameters())
     
 
     previous = 0
