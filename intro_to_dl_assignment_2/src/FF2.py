@@ -74,9 +74,10 @@ def validate(model, device, dev_loader):
             correct += pred.eq(target.view_as(pred)).sum().item()
             
     validation_loss /= len(dev_loader.dataset)
-    print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
+    print('\nDev set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
         validation_loss, correct, len(dev_loader.dataset),
-        100. * correct / len(dev_loader.dataset)))                    
+        100. * correct / len(dev_loader.dataset))) 
+    return 100. * correct / len(dev_loader.dataset)                 
            
             
 
@@ -156,8 +157,8 @@ def main():
         if acc < previous:
             count+1
             if count >= 3:
-                print('Overfitting! Proceeding to test set)
-                      break
+                print('Overfitting! Proceeding to test set')
+                break
         else:
             previous = acc
             count = 0
@@ -166,9 +167,9 @@ def main():
                 torch.save(model.state_dict(), "checkpoint.pt")
                 
                 
-checkpoint = torch.load("checkpoint.pt")
-model.load_state_dict(checkpoint)
-test(model, device, test_loader)
+    checkpoint = torch.load("checkpoint.pt")
+    model.load_state_dict(checkpoint)
+    test(model, device, test_loader)
 
 
 
