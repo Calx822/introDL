@@ -11,7 +11,8 @@ from torch.optim.lr_scheduler import StepLR
 
 input_dim=784 #Mnist: 28x28 images -> input dimension = 784
 #--- hyperparameters ---
-N_EPOCHS = 2
+
+
 BATCH_SIZE_TRAIN = 100
 BATCH_SIZE_TEST = 100
 BATCH_SIZE_DEV = 100
@@ -52,6 +53,11 @@ def train(args,model, device, train_loader, optimizer, epoch):
         optimizer.zero_grad()
         output = model(data)
         loss = F.nll_loss(output, target)
+        if args.rtype == 1:
+            l1_reg = 0.0
+            for param in model.parameters():
+                l1_reg += args.alpha*torch.norm(param,1)
+        loss = loss         
         loss.backward()
         optimizer.step()
 
@@ -106,7 +112,7 @@ def main():
     
     parser.add_argument('--epochs', type=int, default=14, metavar='N',
                         help='number of epochs to train (default: 14)')
-    parser.add_argument('--lr', type=float, default=0.01, metavar='LR',
+    parser.add_argument('--lr', type=float, default=0.001, metavar='LR',
                         help='learning rate (default: 0.001)')
     parser.add_argument('--seed', type=int, default=1, metavar='S',
                         help='random seed (default: 1)')
