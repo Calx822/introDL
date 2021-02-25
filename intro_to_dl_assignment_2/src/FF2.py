@@ -44,7 +44,7 @@ class CNN(nn.Module):
         return F.log_softmax(x, dim=1)
 
 
-def train(model, device, train_loader, optimizer, epoch):
+def train(args,model, device, train_loader, optimizer, epoch):
     model.train()
 
     for batch_idx, (data, target) in enumerate(train_loader):
@@ -55,8 +55,8 @@ def train(model, device, train_loader, optimizer, epoch):
         loss.backward()
         optimizer.step()
 
-        
-        print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
+        if batch_idx % args.log_interval == 0:
+            print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
                 epoch, batch_idx * len(data), len(train_loader.dataset),
                 100. * batch_idx / len(train_loader), loss.item()))
            
@@ -83,6 +83,21 @@ def test(model, device, test_loader):
 
 
 def main():
+    parser = argparse.ArgumentParser(description='Sign MNIST - Intro DL Homework 2')
+    
+    parser.add_argument('--epochs', type=int, default=14, metavar='N',
+                        help='number of epochs to train (default: 14)')
+    parser.add_argument('--lr', type=float, default=0.001, metavar='LR',
+                        help='learning rate (default: 0.001)')
+    parser.add_argument('--seed', type=int, default=1, metavar='S',
+                        help='random seed (default: 1)')
+    parser.add_argument('--log-interval', type=int, default=60, metavar='N',
+                        help='how many batches to wait before logging training status')
+    args = parser.parse_args()
+    
+    
+    
+    
     # Training settings
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -98,14 +113,16 @@ def main():
     dev_loader = torch.utils.data.DataLoader(dataset = dev_set, batch_size = BATCH_SIZE_DEV, shuffle = False)
     test_loader = torch.utils.data.DataLoader(dataset=test_set, batch_size=BATCH_SIZE_TEST, shuffle=False)
 
+    
+   
     model = CNN().to(device)
-    optimizer = optim.Adam(model.parameters())
+    optimizer = optim.Adam(model.parameters(), lr = args.lr)
     
 
 
     
-    for epoch in range(N_EPOCHS+1):
-        train(model, device, train_loader, optimizer, epoch)
+    for epoch in range(1, args.epochs + 1):
+        train(args, model, device, train_loader, optimizer, epoch)
         #test(model,device,dev_loader, optimizer,loss_function, epoch)
         test(model, device, test_loader)
 
