@@ -114,7 +114,7 @@ def main():
                         help = 'regularisation parameter (default 0')
     parser.add_argument('--rtype', type = int, default = 0, metavar = 'L',
                         help = "Regularisation type L1/L2 (default none)")
-    parser.add_argument('--log-interval', type=int, default=60, metavar='N',
+    parser.add_argument('--log-interval', type=int, default=10, metavar='N',
                         help='how many batches to wait before logging training status')
     args = parser.parse_args()
     
