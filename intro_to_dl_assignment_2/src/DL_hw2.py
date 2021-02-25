@@ -10,8 +10,11 @@ import numpy as np
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
+
+
+
 #--- hyperparameters ---
-N_EPOCHS = 5
+N_EPOCHS = 50
 BATCH_SIZE_TRAIN = 100
 BATCH_SIZE_TEST = 100
 BATCH_SIZE_DEV = 100
@@ -102,30 +105,68 @@ test_losses = []
 test_counter = [i*len(train_loader.dataset) for i in range(N_EPOCHS + 1)]
 
 #--- training ---
-for epoch in range(N_EPOCHS):
+
+    
+    
+def train(model, device, train_loader, optimizer, epoch):
+    
+    # num_params = 0
+    # for p in model.parameters():
+    #     num_params +=p.data.numel()
+    
+    # print('Total number of parameters: ' + str(num_params))      
+    # c1 = 0
+    # threshold = 1e-4
+    # for (i,p) in enumerate(model.parameters()):
+    #     if i == 0 or i == 2:
+    #         c1+=sum(sum(torch.abs(p.data)<threshold)).item()   
+
+    # print('Model parameters below threshold: ' + str(c1))         
+    # plist.append(c1) 
+    model.train()
+
+    for batch_idx, (data, target) in enumerate(train_loader):
+        data, target = data.to(device), target.to(device)
+        optimizer.zero_grad()
+        output = model(data)
+        loss = F.nll_loss(output, target)
+        # l2_reg = 0.0
+        # alpha = 0.1
+        # for param in model.parameters():
+        #     l2_reg += alpha*torch.norm(param,2)**2
+        # loss = loss + l2_reg
+        loss.backward()
+        optimizer.step()
+
+        if batch_idx % args.log_interval == 0:
+            print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
+                epoch, batch_idx * len(data), len(train_loader.dataset),
+                100. * batch_idx / len(train_loader), loss.item()))
+            if args.dry_run:
+                break    
    
    
-  for batch_num, (data, target) in enumerate(train_loader):
-    data, target = data.to(device), target.to(device)  
-    optimizer.zero_grad()
-    output = model(data)
-    loss = loss_function(output, target)
-    l1_reg = 0.0
-    alpha = 1e-3
-    for param in model.parameters():
-        l1_reg += alpha*torch.norm(param,1)
-        loss = loss + l1_reg
-    loss.backward()
-    optimizer.step()
-    if g == True:
-      print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
-        epoch, batch_num * len(data), len(train_loader.dataset),
-        100. * batch_num / len(train_loader), loss.item()))
-      train_losses.append(loss.item())
-      train_counter.append(
-        (batch_num*100) + ((epoch-1)*len(train_loader.dataset)))
-    #   torch.save(model.state_dict(), '/results/model.pth')
-    #   torch.save(optimizer.state_dict(), '/results/optimizer.pth')
+#   for batch_num, (data, target) in enumerate(train_loader):
+#     data, target = data.to(device), target.to(device)  
+#     optimizer.zero_grad()
+#     output = model(data)
+#     loss = loss_function(output, target)
+#     l1_reg = 0.0
+#     alpha = 1e-3
+#     for param in model.parameters():
+#         l1_reg += alpha*torch.norm(param,1)
+#         loss = loss + l1_reg
+#     loss.backward()
+#     optimizer.step()
+#     if g == True:
+#       print('Train Epoch: {} [{}/{} ({:.0f}%)]\tLoss: {:.6f}'.format(
+#         epoch, batch_num * len(data), len(train_loader.dataset),
+#         100. * batch_num / len(train_loader), loss.item()))
+#       train_losses.append(loss.item())
+#       train_counter.append(
+#         (batch_num*100) + ((epoch-1)*len(train_loader.dataset)))
+#     #   torch.save(model.state_dict(), '/results/model.pth')
+#     #   torch.save(optimizer.state_dict(), '/results/optimizer.pth')
         
 
         # print('Training: Epoch %d - Batch %d/%d: Loss: %.4f | Train Acc: %.3f%% (%d/%d)' % 
@@ -145,6 +186,7 @@ test_loss = 0
 test_correct = 0
 total = 0
 correct = 0
+
 model.eval()
 
 with torch.no_grad():
@@ -160,6 +202,26 @@ test_losses.append(test_loss)
 print('\nTest set: Avg. loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format( 
     test_loss, correct, len(test_loader.dataset), 
     100. * correct / len(test_loader.dataset)))
+
+
+def test(model, device, test_loader, losslist,acclist):
+    model.eval()
+    test_loss = 0
+    correct = 0
+    with torch.no_grad():
+        for data, target in test_loader:
+            data, target = data.to(device), target.to(device)
+            output = model(data)
+            test_loss += loss_function(output, target).item()  # sum up batch loss
+            pred = output.argmax(dim=1, keepdim=True)[1]  # get the index of the max log-probability
+            correct += pred.eq(target.view_as(pred)).sum()
+
+    test_loss /= len(test_loader.dataset)
+    losslist.append(test_loss)
+    acclist.append(correct/len(test_loader.dataset))
+    print('\nTest set: Average loss: {:.4f}, Accuracy: {}/{} ({:.0f}%)\n'.format(
+        test_loss, correct, len(test_loader.dataset),
+        100. * correct / len(test_loader.dataset)))
 
 
 
