@@ -133,7 +133,7 @@ def main():
     dev_set   = datasets.ImageFolder(DATA_DIR % 'dev',   transform=test_transform)
     test_set  = datasets.ImageFolder(DATA_DIR % 'test',  transform=test_transform)
     train_loader = torch.utils.data.DataLoader(dataset=train_set, batch_size=BATCH_SIZE_TRAIN, shuffle=True)
-    dev_loader = torch.utils.data.DataLoader(dataset = dev_set, batch_size = BATCH_SIZE_DEV, shuffle = False)
+    dev_loader = torch.utils.data.DataLoader(dataset=dev_set, batch_size = BATCH_SIZE_DEV, shuffle = False)
     test_loader = torch.utils.data.DataLoader(dataset=test_set, batch_size=BATCH_SIZE_TEST, shuffle=False)
 
     
@@ -148,10 +148,6 @@ def main():
     
     for epoch in range(1, args.epochs + 1):
         
-        train_loss = []
-        train_counter = []
-        test_losses = []
-        test_counter = [i*len(train_loader.dataset) for i in range(args.epochs + 1)]
         train(args, model, device, train_loader, optimizer, epoch)
         acc = validate(model, device, dev_loader)
         if acc < previous:
