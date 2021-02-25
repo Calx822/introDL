@@ -16,7 +16,7 @@ input_dim=784 #Mnist: 28x28 images -> input dimension = 784
 BATCH_SIZE_TRAIN = 100
 BATCH_SIZE_TEST = 100
 BATCH_SIZE_DEV = 100
-
+ad = 1
 
 
 
