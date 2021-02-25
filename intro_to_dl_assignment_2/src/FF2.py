@@ -91,6 +91,10 @@ def main():
                         help='learning rate (default: 0.001)')
     parser.add_argument('--seed', type=int, default=1, metavar='S',
                         help='random seed (default: 1)')
+    parser.add_argument('--alpha', type = float, default = 0,metavar = 'A',
+                        help = 'regularisation parameter (default 0')
+    parser.add_argument('--rtype', type = int, default = 0, metavar = 'L',
+                        help = "Regularisation type L1/L2 (default none)")
     parser.add_argument('--log-interval', type=int, default=60, metavar='N',
                         help='how many batches to wait before logging training status')
     args = parser.parse_args()
