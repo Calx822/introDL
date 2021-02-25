@@ -147,7 +147,7 @@ def main():
     
    
     model = CNN().to(device)
-    optimizer = optim.Adam(model.parameters())
+    optimizer = optim.AdaDelta(model.parameters())
     
 
     previous = 0
