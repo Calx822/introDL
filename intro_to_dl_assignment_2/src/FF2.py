@@ -6,6 +6,7 @@ import torch.nn.functional as F
 import torch.optim as optim
 from torchvision import datasets, transforms
 from torch.optim.lr_scheduler import StepLR
+import matplotlib.pyplot as plt
 
 
 
@@ -158,11 +159,15 @@ def main():
     count = 0
     best_acc = 0
     
+    val_loss = []
+    
     
     for epoch in range(1, args.epochs + 1):
         
         train(args, model, device, train_loader, optimizer, epoch)
         acc = validate(model, device, dev_loader)
+        val_loss.append(acc)
+        
         if acc < previous:
             count+1
             if count >= 3:
@@ -179,6 +184,11 @@ def main():
     checkpoint = torch.load("checkpoint.pt")
     model.load_state_dict(checkpoint)
     test(model, device, test_loader)
+    plt.ylabel('Validation accuracy')
+    plt.xlabel('Epoch')
+    #plt.legend()
+    plt.plot(val_loss)
+    plt.savefig('gamma.png')
 
 
 
