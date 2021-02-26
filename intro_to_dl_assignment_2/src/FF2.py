@@ -58,8 +58,11 @@ def train(args,model, device, train_loader, optimizer, epoch):
         for param in model.parameters():
             l1_reg += args.alpha*torch.norm(param,1)
             l2_reg += args.alpha*torch.norm(param,2)**2
-        
-        loss = loss         
+        if args.rtype == 1:
+            loss = loss + l1_reg
+        elif args.rtype == 2:
+            loss = loss + l2_reg
+                
         loss.backward()
         optimizer.step()
 
@@ -70,6 +73,7 @@ def train(args,model, device, train_loader, optimizer, epoch):
             
 
 def validate(model, device, dev_loader):
+    model.eval()
     validation_loss = 0
     correct = 0
     
@@ -153,6 +157,7 @@ def main():
     previous = 0
     count = 0
     best_acc = 0
+    
     
     for epoch in range(1, args.epochs + 1):
         
