@@ -166,7 +166,7 @@ def main():
         
         train(args, model, device, train_loader, optimizer, epoch)
         acc = validate(model, device, dev_loader)
-        val_loss.append(acc)
+        val_loss.append(acc/100.)
         
         if acc < previous:
             count+1
