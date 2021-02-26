@@ -13,4 +13,4 @@
 module purge
 module load pytorch/1.7
 
-python3 DL_hw2.py --epochs 30 
+python3 FF2.py --epochs 30 
